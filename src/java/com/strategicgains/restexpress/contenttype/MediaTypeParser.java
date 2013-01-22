@@ -32,21 +32,20 @@ public class MediaTypeParser
 	 * @param contentTypeHeader
 	 * @return
 	 */
-	public static List<MediaTypeSegment> parse(String contentTypeHeader)
+	public static List<MediaRange> parse(String contentTypeHeader)
 	{
 		String[] segments = contentTypeHeader.split("\\s*,\\s*");
-		List<MediaTypeSegment> items = new ArrayList<MediaTypeSegment>();
+		List<MediaRange> items = new ArrayList<MediaRange>();
 
 		for (String segment : segments)
 		{
-			items.add(MediaTypeSegment.parse(segment));
+			items.add(MediaRange.parse(segment));
 		}
 
-//		Collections.sort(items);
 		return items;
 	}
 	
-	public static MediaTypeSegment getBestMatch(List<MediaTypeSegment> supported, List<MediaTypeSegment> requested)
+	public static MediaRange getBestMatch(List<MediaRange> supported, List<MediaRange> requested)
 	{
 		return null;
 	}
