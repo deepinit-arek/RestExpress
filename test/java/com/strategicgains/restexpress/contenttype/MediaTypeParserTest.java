@@ -17,6 +17,7 @@ package com.strategicgains.restexpress.contenttype;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -196,7 +197,15 @@ public class MediaTypeParserTest
 	public void shouldChooseApplicationJsonWithStarStar()
 	{
 		List<MediaRange> supported = MediaTypeParser.parse("text/javascript;q=0.8, application/json, application/xml, text/xml");
-		List<MediaRange> requested = MediaTypeParser.parse("*/*; application/json");
+		List<MediaRange> requested = MediaTypeParser.parse("*/*");
 		assertEquals("application/json", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldReturnNull()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("text/javascript, application/json, application/xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("application/blah, text/plain");
+		assertNull(MediaTypeParser.getBestMatch(supported, requested));
 	}
 }

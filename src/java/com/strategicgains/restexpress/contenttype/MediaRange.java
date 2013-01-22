@@ -109,30 +109,37 @@ public class MediaRange
 		return b.toString();
 	}
 
+	/**
+	 * 
+	 * @param that
+	 * @return -1 if not applicable. Otherwise a rank value >= 0
+	 */
 	public int rankAgainst(MediaRange that)
     {
-		int rank = 0;
+		int rank = -1;  // Default is not-applicable.
 
-		if ((this.type.equals(that.type) || "*".equals(this.type))
+		if ((this.type.equals(that.type) || "*".equals(this.type) || "*".equals(that.subtype))
 			&& (this.subtype.equals(that.subtype) || "*".equals(that.subtype) || "*".equals(this.subtype)))
 		{
-			if (this.type.equals(that.type) && !"*".equals(this.type))
+			rank = 0;  // This media type IS applicable
+
+			if (this.type.equals(that.type))
 			{
 				rank += 100;
 			}
 
 			if (this.subtype.equals(that.subtype) && !"*".equals(this.subtype))
 			{
-				rank += 10;
+				rank += 50;
 			}
-			
+
 			for (Entry<String, String> entry : parameters.entrySet())
 			{
 				String value = that.parameters.get(entry.getKey());
 
 				if (value != null && value.equals(entry.getValue()))
 				{
-					++rank;
+					rank += 2;
 				}
 			}
 		}
