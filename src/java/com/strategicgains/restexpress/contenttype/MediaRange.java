@@ -35,7 +35,7 @@ public class MediaRange
 	String name;
 	String type;
 	String subtype;
-	double qvalue = 1.0;
+	float qvalue = 1.0f;
 	Map<String, String> parameters = new HashMap<String, String>();
 
 	public MediaRange(String value)
@@ -66,7 +66,7 @@ public class MediaRange
 
 				if ("q".equalsIgnoreCase(token))
 				{
-					r.qvalue = Double.parseDouble(value);
+					r.qvalue = Float.parseFloat(value);
 				}
 				else if (value != null)
 				{
@@ -108,4 +108,35 @@ public class MediaRange
 
 		return b.toString();
 	}
+
+	public int rankAgainst(MediaRange that)
+    {
+		int rank = 0;
+
+		if ((this.type.equals(that.type) || "*".equals(this.type))
+			&& (this.subtype.equals(that.subtype) || "*".equals(that.subtype) || "*".equals(this.subtype)))
+		{
+			if (this.type.equals(that.type) && !"*".equals(this.type))
+			{
+				rank += 100;
+			}
+
+			if (this.subtype.equals(that.subtype) && !"*".equals(this.subtype))
+			{
+				rank += 10;
+			}
+			
+			for (Entry<String, String> entry : parameters.entrySet())
+			{
+				String value = that.parameters.get(entry.getKey());
+
+				if (value != null && value.equals(entry.getValue()))
+				{
+					++rank;
+				}
+			}
+		}
+		
+		return rank;
+    }
 }

@@ -16,6 +16,7 @@
 package com.strategicgains.restexpress.contenttype;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,9 +45,73 @@ public class MediaTypeParser
 
 		return items;
 	}
-	
-	public static MediaRange getBestMatch(List<MediaRange> supported, List<MediaRange> requested)
+
+	public static String getBestMatch(List<MediaRange> supported, List<MediaRange> requested)
 	{
-		return null;
+		List<WeightedMatch> matches = new ArrayList<WeightedMatch>();
+
+		for (MediaRange target : supported)
+		{
+			WeightedMatch m = getWeightedMatch(target, requested);
+			
+			if (m != null)
+			{
+				matches.add(m);
+			}
+		}
+
+		if (matches.isEmpty()) return null;
+		if (matches.size() == 1) return matches.get(0).mediaRange.asMediaType();
+
+		Collections.sort(matches);
+		return matches.get(0).mediaRange.asMediaType();
+	}
+
+	public static WeightedMatch getWeightedMatch(MediaRange target, List<MediaRange> parsedRanges)
+	{
+		int maxRank = -1;
+		MediaRange bestMatch = null;
+
+		for (MediaRange parsed : parsedRanges)
+		{
+			int rank = target.rankAgainst(parsed);
+
+			if (rank > maxRank)
+			{
+				maxRank = rank;
+				bestMatch = target;
+			}
+		}
+
+		return (maxRank == -1 ? null : new WeightedMatch(bestMatch, maxRank));
+	}
+	
+	protected static class WeightedMatch
+	implements Comparable<WeightedMatch>
+	{
+		MediaRange mediaRange;
+		int rank;
+		
+		public WeightedMatch(MediaRange range, int rank)
+		{
+			this.mediaRange = range;
+			this.rank = rank;
+		}
+
+		/**
+		 * Reverse-rank natural ordering.
+		 */
+		@Override
+        public int compareTo(WeightedMatch that)
+        {
+			int rankSign = (that.rank - this.rank);
+			
+			if (rankSign == 0)
+			{
+				return (int) ((that.mediaRange.qvalue - this.mediaRange.qvalue) * 10);
+			}
+			
+			return rankSign;
+        }
 	}
 }

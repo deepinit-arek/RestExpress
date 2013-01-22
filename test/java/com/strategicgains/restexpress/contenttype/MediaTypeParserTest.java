@@ -15,15 +15,13 @@
 */
 package com.strategicgains.restexpress.contenttype;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
-
-import com.strategicgains.restexpress.contenttype.MediaTypeParser;
 
 /**
  * @author toddf
@@ -120,5 +118,85 @@ public class MediaTypeParserTest
 		assertEquals("*/*", m5.asMediaType());
 		assertEquals(0.5, m5.qvalue, 0.01);
 		assertTrue(m5.parameters.isEmpty());
+	}
+
+	@Test
+	public void shouldChooseTextXml()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("application/xbel+xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("text/*;q=0.5,*; q=0.1");
+		assertEquals("text/xml", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseTextJson()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("application/json, text/json");
+		List<MediaRange> requested = MediaTypeParser.parse("image/*;q=0.5,text/*; q=0.1");
+		assertEquals("text/json", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseTextHtml()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
+		List<MediaRange> requested = MediaTypeParser.parse("text/html;q=0.5,text/plain; q=0.1,*/*");
+		assertEquals("text/html", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseTextXC()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
+		List<MediaRange> requested = MediaTypeParser.parse("*/*;q=0.9, text/x-c");
+		assertEquals("text/x-c", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseLevel1()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("text/*;q=0.3 , text/html;q=0.7, text/html;q=0.9;level=1,text/html;level=2;q=0.4, */*;q=0.5");
+		List<MediaRange> requested = MediaTypeParser.parse("text/*");
+		assertEquals("text/html;level=1", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseApplicationJson()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("application/json, application/javascript, text/javascript, application/xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("application/json; application/xml");
+		assertEquals("application/json", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseApplicationJsonWithApplicationStar()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("application/json, application/javascript, text/javascript, application/xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("application/*; text/xml");
+		assertEquals("application/json", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseApplicationXml()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("application/json, application/javascript, text/javascript, application/xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("application/xml;application/json");
+		assertEquals("application/xml", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseTextJavascriptWithTextStar()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("application/json, application/javascript, text/javascript, application/xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("text/*; text/xml");
+		assertEquals("text/javascript", MediaTypeParser.getBestMatch(supported, requested));
+	}
+
+	@Test
+	public void shouldChooseApplicationJsonWithStarStar()
+	{
+		List<MediaRange> supported = MediaTypeParser.parse("text/javascript;q=0.8, application/json, application/xml, text/xml");
+		List<MediaRange> requested = MediaTypeParser.parse("*/*; application/json");
+		assertEquals("application/json", MediaTypeParser.getBestMatch(supported, requested));
 	}
 }
