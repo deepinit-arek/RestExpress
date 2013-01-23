@@ -47,10 +47,10 @@ public class ResponseProcessor
 		return wrapper;
 	}
 
-	public String process(Response response)
+	public String process(Response response, String mediaType)
 	{
 		Object wrapped = wrapper.wrap(response);
-		response.setContentType(serializer.getResultingContentType());
+		response.setContentType(mediaType);
 		
 		if (wrapped != null)
 		{

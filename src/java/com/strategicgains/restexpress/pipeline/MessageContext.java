@@ -123,41 +123,41 @@ public class MessageContext
 	{
 		getResponse().setResponseStatus(httpStatus);
 	}
-	
-	public String getRequestedFormat()
-	{
-		String format=null;
 
-		if (hasAction())
-		{
-			format = getAction().getParameter(Parameters.Query.FORMAT);
-		}
-
-		if (format == null || format.trim().isEmpty())
-		{
-			format = getRequest().getRawHeader(Parameters.Query.FORMAT);
-		}
-		
-		return format;
-	}
+//	public String getRequestedFormat()
+//	{
+//		String format=null;
+//
+//		if (hasAction())
+//		{
+//			format = getAction().getParameter(Parameters.Query.FORMAT);
+//		}
+//
+//		if (format == null || format.trim().isEmpty())
+//		{
+//			format = getRequest().getRawHeader(Parameters.Query.FORMAT);
+//		}
+//		
+//		return format;
+//	}
 
 	/**
 	 * @return
 	 */
-	public boolean supportsRequestedFormat()
-	{
-		if (!hasAction()) return false;
-
-		return getAction().getRoute().supportsFormat(getRequest().getFormat());
-	}
+//	public boolean supportsRequestedFormat()
+//	{
+//		if (!hasAction()) return false;
+//
+//		return getAction().getRoute().supportsFormat(getRequest().getFormat());
+//	}
 
 	/**
      * @return
      */
-    public Collection<String> getSupportedRouteFormats()
-    {
-    	if (!hasAction()) return Collections.emptyList();
-
-    	return getAction().getRoute().getSupportedFormats();
-    }
+//    public Collection<String> getSupportedRouteFormats()
+//    {
+//    	if (!hasAction()) return Collections.emptyList();
+//
+//    	return getAction().getRoute().getSupportedFormats();
+//    }
 }

@@ -264,7 +264,7 @@ extends SimpleChannelUpstreamHandler
 		boolean isResolved = true;
 		if (context.hasResponseProcessor()) return isResolved;
 
-		ResponseProcessor rp = responseProcessorResolver.resolve(context.getRequestedFormat());
+		ResponseProcessor rp = responseProcessorResolver.resolve(context.getRequest());
 		
 		if (rp == null)
 		{

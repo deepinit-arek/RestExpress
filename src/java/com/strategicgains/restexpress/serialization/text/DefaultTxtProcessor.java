@@ -18,11 +18,14 @@
 package com.strategicgains.restexpress.serialization.text;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import com.strategicgains.restexpress.ContentType;
+import com.strategicgains.restexpress.contenttype.MediaRange;
+import com.strategicgains.restexpress.contenttype.MediaTypeParser;
 import com.strategicgains.restexpress.serialization.SerializationProcessor;
 import com.strategicgains.restexpress.serialization.Serializer;
 
@@ -41,6 +44,9 @@ import com.strategicgains.restexpress.serialization.Serializer;
 public class DefaultTxtProcessor
 implements SerializationProcessor
 {
+	private static final String SUPPORTED_MEDIA_TYPES = ContentType.TEXT_PLAIN;
+	private static List<MediaRange> SUPPORTED_MEDIA_RANGES = MediaTypeParser.parse(SUPPORTED_MEDIA_TYPES);
+
 	private Map<Class<?>, TextSerializer> aliases = new HashMap<Class<?>, TextSerializer>();
 
 	public DefaultTxtProcessor()
@@ -103,8 +109,8 @@ implements SerializationProcessor
 	}
 
 	@Override
-	public String getResultingContentType()
-	{
-		return ContentType.TEXT_PLAIN;
-	}
+    public List<MediaRange> getSupportedMediaRanges()
+    {
+		return SUPPORTED_MEDIA_RANGES;
+    }
 }
