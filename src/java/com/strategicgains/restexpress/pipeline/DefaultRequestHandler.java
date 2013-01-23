@@ -33,9 +33,9 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
 import com.strategicgains.restexpress.Request;
 import com.strategicgains.restexpress.Response;
-import com.strategicgains.restexpress.exception.BadRequestException;
 import com.strategicgains.restexpress.exception.ExceptionMapping;
 import com.strategicgains.restexpress.exception.ExceptionUtils;
+import com.strategicgains.restexpress.exception.NotAcceptableException;
 import com.strategicgains.restexpress.exception.ServiceException;
 import com.strategicgains.restexpress.response.DefaultHttpResponseWriter;
 import com.strategicgains.restexpress.response.HttpResponseWriter;
@@ -144,7 +144,7 @@ extends SimpleChannelUpstreamHandler
 
 			if (!isResponseProcessorResolved && !context.supportsRequestedFormat())
 			{
-				throw new BadRequestException("Requested representation format not supported: " 
+				throw new NotAcceptableException("Requested representation format not supported: " 
 					+ context.getRequest().getFormat() 
 					+ ". Supported formats: " + StringUtils.join(", ", getSupportedFormats(context)));
 			}
