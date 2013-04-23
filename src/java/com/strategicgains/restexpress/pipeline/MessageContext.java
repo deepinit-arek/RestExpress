@@ -15,11 +15,14 @@
  */
 package com.strategicgains.restexpress.pipeline;
 
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map.Entry;
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
+import com.strategicgains.restexpress.ContentType;
 import com.strategicgains.restexpress.Parameters;
 import com.strategicgains.restexpress.Request;
 import com.strategicgains.restexpress.Response;
@@ -66,7 +69,7 @@ public class MessageContext
 	public void setAction(Action action)
 	{
 		this.action = action;
-		getRequest().addAllHeaders(action.getParameters());
+		addUrlParametersAsHeaders(getRequest(), action.getParameters());
 		getRequest().setResolvedRoute(action.getRoute());
 		getResponse().setIsSerialized(action.shouldSerializeResponse());
 	}
@@ -123,41 +126,56 @@ public class MessageContext
 	{
 		getResponse().setResponseStatus(httpStatus);
 	}
+	
+	public String getRequestedFormat()
+	{
+		String format=null;
 
-//	public String getRequestedFormat()
-//	{
-//		String format=null;
-//
-//		if (hasAction())
-//		{
-//			format = getAction().getParameter(Parameters.Query.FORMAT);
-//		}
-//
-//		if (format == null || format.trim().isEmpty())
-//		{
-//			format = getRequest().getRawHeader(Parameters.Query.FORMAT);
-//		}
-//		
-//		return format;
-//	}
+		if (hasAction())
+		{
+			format = getAction().getParameter(Parameters.Query.FORMAT);
+		}
+
+		if (format == null || format.trim().isEmpty())
+		{
+			format = getRequest().getHeader(Parameters.Query.FORMAT);
+		}
+		
+		return format;
+	}
 
 	/**
 	 * @return
 	 */
-//	public boolean supportsRequestedFormat()
-//	{
-//		if (!hasAction()) return false;
-//
-//		return getAction().getRoute().supportsFormat(getRequest().getFormat());
-//	}
+	public boolean supportsRequestedFormat()
+	{
+		if (!hasAction()) return false;
+
+		return getAction().getRoute().supportsFormat(getRequest().getFormat());
+	}
 
 	/**
      * @return
      */
-//    public Collection<String> getSupportedRouteFormats()
-//    {
-//    	if (!hasAction()) return Collections.emptyList();
-//
-//    	return getAction().getRoute().getSupportedFormats();
-//    }
+    public Collection<String> getSupportedRouteFormats()
+    {
+    	if (!hasAction()) return Collections.emptyList();
+
+    	return getAction().getRoute().getSupportedFormats();
+    }
+
+	private void addUrlParametersAsHeaders(Request request, Collection<Entry<String, String>> parameters)
+    {
+		for (Entry<String, String> entry : parameters)
+		{
+			try
+            {
+	            request.addHeader(entry.getKey(), URLDecoder.decode(entry.getValue(), ContentType.ENCODING));
+            }
+            catch (Exception e)
+            {
+	            request.addHeader(entry.getKey(), entry.getValue());
+            }
+		}
+    }
 }
